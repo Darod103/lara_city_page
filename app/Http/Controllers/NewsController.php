@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
-use App\Models\Post;
-use function Laravel\Prompts\text;
+use App\Models\News;
+use Illuminate\Http\Request;
 
-class PostController extends Controller
+class NewsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $latestPosts = Post::orderBy('created_at', 'desc')->take(3)->get();
-        return view('posts.index', ['latestPosts' => $latestPosts]);
+        $allNews = News::all();
+        return view('news.index', compact('allNews'));
     }
 
     /**
@@ -29,36 +27,39 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request)
+    public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'text' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-        $validated = $request->validated();
         $imagePath = $request->file('image')
             ? $request->file('image')->store('images', 'public')
             : null;
 
-         Post::create([
+        News::create([
             'user_id' => auth()->id(),
-            'title' => $validated['title'],
-            'text' => $validated['text'],
+            'title' => $validatedData['title'],
+            'text' => $validatedData['text'],
             'image_url' => $imagePath,
         ]);
-
-        return redirect()->route('home')->with('success', 'Пост создан.');
+        return redirect()->route('home');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(News $news)
     {
-        //
+        return(view('news.show', compact('news')));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit(News $news)
     {
         //
     }
@@ -66,7 +67,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(Request $request, News $news)
     {
         //
     }
@@ -74,7 +75,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(News $news)
     {
         //
     }
