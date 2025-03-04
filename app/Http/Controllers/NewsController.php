@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 
 class NewsController extends Controller
 {
@@ -45,7 +47,7 @@ class NewsController extends Controller
             'text' => $validatedData['text'],
             'image_url' => $imagePath,
         ]);
-        return redirect()->route('home');
+        return redirect()->route('news.index')->with('success','Новость успешно добавлена');
     }
 
     /**
@@ -77,6 +79,10 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
-        //
+        if ($news->img_url){
+            Storage::delete($news->img_url);
+        }
+        $news->delete();
+        return redirect()->route('news.index')->with('success','Новость успешно удаленна');
     }
 }

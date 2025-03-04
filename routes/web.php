@@ -10,6 +10,7 @@ Route::get('/',[\App\Http\Controllers\HomeController::class,'index'])->name('hom
 Route::post('/news', [NewsController::class, 'store'])->name('news.store');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
+Route::delete('news/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
