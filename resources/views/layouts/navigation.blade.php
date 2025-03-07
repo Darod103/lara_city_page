@@ -14,7 +14,7 @@
                     <a class="nav-link" href="{{route('news.index')}}">Новости</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Галерея</a>
+                    <a class="nav-link" href="{{route('gallery.index')}}">Галерея</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Расписание поездов</a>

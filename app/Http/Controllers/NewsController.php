@@ -47,7 +47,7 @@ class NewsController extends Controller
             'text' => $validatedData['text'],
             'image_url' => $imagePath,
         ]);
-        return redirect()->route('news.index')->with('success','Новость успешно добавлена');
+        return redirect()->route('news.index')->with('success', 'Новость успешно добавлена');
     }
 
     /**
@@ -55,7 +55,7 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        return(view('news.show', compact('news')));
+        return (view('news.show', compact('news')));
     }
 
     /**
@@ -79,10 +79,10 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
-        if ($news->img_url){
+        if ($news->img_url) {
             Storage::delete($news->img_url);
         }
         $news->delete();
-        return redirect()->route('news.index')->with('success','Новость успешно удаленна');
+        return redirect()->route('news.index')->with('success', 'Новость успешно удаленна');
     }
 }
