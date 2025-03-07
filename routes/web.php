@@ -16,6 +16,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/gallery',[PictureController::class,'index'])->name('gallery.index');
     Route::post('/gallery',[PictureController::class,'store'])->name('gallery.store');
     Route::post('/gallery/{id}/vote',[\App\Http\Controllers\VoteController::class,'store'])->name('gallery.vote');
+    Route::delete('/gallery/{picture}',[PictureController::class,'destroy'])->name('gallery.destroy');
 });
 
 Route::get('/dashboard', function () {

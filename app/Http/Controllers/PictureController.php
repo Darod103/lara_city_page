@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Gallery\PictureRequest;
 use App\Models\Picture;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PictureController extends Controller
 {
@@ -25,5 +26,12 @@ class PictureController extends Controller
         );
 
         return redirect()->route('gallery.index')->with('success', 'Картинка успешно добавлена !');
+    }
+
+    public function destroy(Picture $picture)
+    {
+        Storage::disk('public')->delete($picture->url);
+        $picture->delete();
+        return redirect()->route('gallery.index')->with('success', 'Картинка успешно удалена !');
     }
 }

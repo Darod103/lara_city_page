@@ -4,24 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }}</title>
-
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
+    <!-- Подключаем свой CSS -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-<x-navigation />
-<x-news-form />
+<x-navigation/>
+<x-news-form/>
 @if ($errors->any())
     <div class="alert alert-danger">
-            @foreach ($errors->all() as $error)
-                {{ $error }}
-            @endforeach
+        @foreach ($errors->all() as $error)
+            {{ $error }}
+        @endforeach
 
     </div>
 @endif
