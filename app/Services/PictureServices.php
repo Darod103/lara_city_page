@@ -8,11 +8,22 @@ use Illuminate\Support\Facades\Storage;
 
 class PictureServices
 {
+    /**
+     * Get all pictures with vote counts, sorted by vote count in descending order.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getAll()
     {
         return Picture::withCount('votes')->orderByDesc('votes_count')->get();
     }
 
+    /**
+     * Save a picture.
+     *
+     * @param PictureRequest $request
+     * @return void
+     */
     public function storePicture(PictureRequest $request)
     {
         $path = $request->file('picture')->store('pictures', 'public');
@@ -22,12 +33,17 @@ class PictureServices
             'url' => $path
         ]);
     }
+
+    /**
+     * Delete a picture.
+     *
+     * @param Picture $picture
+     * @return void
+     */
     public function destroyPicture(Picture $picture)
     {
         Storage::disk('public')->delete($picture->url);
         $picture->delete();
     }
-
-
 
 }
