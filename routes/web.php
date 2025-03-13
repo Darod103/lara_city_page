@@ -7,13 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',[\App\Http\Controllers\HomeController::class,'index'])->name('home');
 
-Route::post('/news', [NewsController::class, 'store'])->name('news.store');
-Route::get('/news', [NewsController::class, 'index'])->name('news.index');
-Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
-Route::delete('news/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
-
+//TODO Сделать норм роутинг
+Route::get('/gallery',[PictureController::class,'index'])->name('gallery.index');
 Route::middleware('auth')->group(function () {
-    Route::get('/gallery',[PictureController::class,'index'])->name('gallery.index');
     Route::post('/gallery',[PictureController::class,'store'])->name('gallery.store');
     Route::post('/gallery/{id}/vote',[\App\Http\Controllers\VoteController::class,'store'])->name('gallery.vote');
     Route::delete('/gallery/{picture}',[PictureController::class,'destroy'])->name('gallery.destroy');
@@ -29,4 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+require __DIR__.'/news.php';
 require __DIR__.'/auth.php';
+
