@@ -1,12 +1,8 @@
-/**{*/
-/*    background-color: black;*/
-/*}*/
+
 .img-container {
     width: 100%;
     height: 250px; /* Можно менять высоту по дизайну */
     overflow: hidden;
-
-
 }
 
 .img-container img {
