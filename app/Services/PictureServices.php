@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Gallery\PictureRequest;
+use App\Http\Requests\Gallery\PictureStoreRequest;
 use App\Models\Picture;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,10 +21,10 @@ class PictureServices
     /**
      * Save a picture.
      *
-     * @param PictureRequest $request
+     * @param PictureStoreRequest $request
      * @return void
      */
-    public function storePicture(PictureRequest $request)
+    public function storePicture(PictureStoreRequest $request)
     {
         $path = $request->file('picture')->store('pictures', 'public');
 

@@ -6,17 +6,16 @@ use App\Http\Requests\News\NewsStoreRequest;
 use App\Models\News;
 use App\Services\NewsServices;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 
 class NewsController extends Controller
 {
     protected NewsServices $newsServices;
 
-   public function __construct(NewsServices $newsServices)
-   {
-       $this->newsServices = $newsServices;
-   }
+    public function __construct(NewsServices $newsServices)
+    {
+        $this->newsServices = $newsServices;
+    }
 
     /**
      * Display a listing of the resource.
@@ -40,7 +39,7 @@ class NewsController extends Controller
      */
     public function store(NewsStoreRequest $request)
     {
-       $this->newsServices->storeNews($request);
+        $this->newsServices->storeNews($request);
         return redirect()->route('news.index')->with('success', 'Новость успешно добавлена');
     }
 

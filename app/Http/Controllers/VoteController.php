@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Vote;
-use Illuminate\Http\Request;
+use App\Services\VoteServices;
+
 
 class VoteController extends Controller
 {
-    public function store(Request $request, $id)
+    private VoteServices $voteServices;
+
+    public function __construct()
     {
-        $userId = auth()->id();
-
-        if (Vote::where('user_id', $userId)->where('picture_id', $id)->exists()) {
-            return back()->with('error', 'Вы уже голосовали за эту фотографию.');
-        }
-
-
-        Vote::create([
-            'user_id' => $userId,
-            'picture_id' => $id,
-        ]);
-
-        return back()->with('success', 'Ваш голос учтен!');
+        $this->voteServices = new VoteServices();
     }
+
+    public function store($id)
+    {
+        return $this->voteServices->storeVote($id);
+    }
+
 }

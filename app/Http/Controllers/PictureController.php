@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Gallery\PictureRequest;
+use App\Http\Requests\Gallery\PictureStoreRequest;
 use App\Models\Picture;
 use App\Services\PictureServices;
-use Illuminate\Support\Facades\Storage;
+
 
 class PictureController extends Controller
 {
@@ -30,10 +30,10 @@ class PictureController extends Controller
     /**
      * Save a new picture.
      *
-     * @param PictureRequest $request
+     * @param PictureStoreRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(PictureRequest $request)
+    public function store(PictureStoreRequest $request)
     {
         $this->pictureServices->storePicture($request);
         return redirect()->route('gallery.index')->with('success', 'Картинка успешно добавлена !');
