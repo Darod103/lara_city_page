@@ -8,13 +8,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="{{route('home')}}">Главная</a>
+                    <a class="nav-link {{request()->routeIs('home') ? 'active': ''}}" href="{{route('home')}}">Главная</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('news.index')}}">Новости</a>
+                    <a class="nav-link {{request()->routeIs('news.index') ? 'active': ''}}" href="{{route('news.index')}}">Новости</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('gallery.index')}}">Галерея</a>
+                    <a class="nav-link {{request()->routeIs('gallery.index') ? 'active': ''}}" href="{{route('gallery.index')}}">Галерея</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Расписание поездов</a>

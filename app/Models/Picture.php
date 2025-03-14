@@ -22,7 +22,7 @@ class Picture extends Model
 
     public function voteCount()
     {
-        $this->votes()->count();
+       return $this->votes()->count();
     }
 
 }
