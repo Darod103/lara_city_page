@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\PictureController;
+
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TrainScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -13,6 +13,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+require __DIR__. '/schedules.php';
 require __DIR__ . '/gallery.php';
 require __DIR__ . '/news.php';
 require __DIR__ . '/auth.php';

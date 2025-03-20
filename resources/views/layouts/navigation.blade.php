@@ -17,23 +17,27 @@
                     <a class="nav-link {{request()->routeIs('gallery.index') ? 'active': ''}}" href="{{route('gallery.index')}}">Галерея</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Расписание поездов</a>
+                    <a class="nav-link {{request()->routeIs('schedules.index') ? 'active': ''}}" href="{{route('schedules.index')}}">Расписание поездов</a>
                 </li>
             </ul>
-            <div class="ms-auto text-end mt-2 mt-lg-0">
+            <div class="ms-auto d-flex justify-content-end gap-2 flex-wrap">
                @guest
                     <a class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#loginModal">Вход</a>
                 @else
                     @if (Auth::user()->role === 'admin' || Auth::user()->role === 'manager')
                         <a  class="btn btn-success" data-bs-toggle="collapse" data-bs-target="#newsForm">Добавить новость</a>
+                        <a  class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scheduleModal">Добавить расписание</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-danger">Выход</button>
                     </form>
+
                 @endguest
             </div>
         </div>
     </div>
 </nav>
-@include('components.modal')
+<x-modal-auth/>
+<x-modal-form-schedules />
+
