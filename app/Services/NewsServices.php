@@ -2,12 +2,19 @@
 
 namespace App\Services;
 
-use App\Http\Requests\News\NewsStoreRequest;
 use App\Models\News;
+use App\Services\TransactionServices;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\News\NewsStoreRequest;
 
 class NewsServices
 {
+    protected TransactionServices $transactionServices;
+
+    public function __construct(TransactionServices $transactionServices)
+    {
+        $this->transactionServices = $transactionServices;
+    }
 
     /**
      * Get all news
@@ -19,21 +26,26 @@ class NewsServices
 
     /**
      * Save news
-     * @return void
+     * @return bool
      */
-    public function storeNews(NewsStoreRequest $request)
+    public function storeNews(NewsStoreRequest $request): bool
     {
         $validatedData = $request->validated();
-
         $imagePath = $this->handleImageUpload($request);
-
-        News::create([
-            'user_id' => auth()->id(),
-            'title' => $validatedData['title'],
-            'text' => $validatedData['text'],
-            'image_url' => $imagePath,
-        ]);
-
+        $result = $this->transactionServices->run(function () use ($validatedData, $imagePath) {
+            News::create([
+                'user_id' => auth()->id(),
+                'title' => $validatedData['title'],
+                'text' => $validatedData['text'],
+                'image_url' => $imagePath,
+            ]);
+        });
+        {
+            if (!$result && $imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
+        }
+        return $result;
     }
 
     /**

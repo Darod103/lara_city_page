@@ -2,12 +2,22 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Gallery\PictureStoreRequest;
 use App\Models\Picture;
+use Illuminate\Support\Facades\DB;
+use App\Services\TransactionServices;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Gallery\PictureStoreRequest;
+
 
 class PictureServices
 {
+    protected TransactionServices $transactionServices;
+
+    public function __construct(TransactionServices $transactionServices)
+    {
+        $this->transactionServices = $transactionServices;
+    }
+
     /**
      * Get all pictures with vote counts, sorted by vote count in descending order.
      *
@@ -22,16 +32,22 @@ class PictureServices
      * Save a picture.
      *
      * @param PictureStoreRequest $request
-     * @return void
+     * @return bool
      */
-    public function storePicture(PictureStoreRequest $request)
+    public function storePicture(PictureStoreRequest $request): bool
     {
         $path = $request->file('picture')->store('pictures', 'public');
-
-        Picture::create([
-            'user_id' => auth()->id(),
-            'url' => $path
-        ]);
+        $result = $this->transactionServices->run(function () use ($path) {
+            Picture::create([
+                'user_id' => auth()->id(),
+                'url' => $path
+            ]);
+        });
+        if (!$result) {
+            // If the transaction fails, delete the uploaded file
+            Storage::disk('public')->delete($path);
+        }
+        return $result;
     }
 
     /**
