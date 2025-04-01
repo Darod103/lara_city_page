@@ -3,9 +3,8 @@
 namespace App\Services;
 
 use App\Models\Picture;
-use Illuminate\Support\Facades\DB;
-use App\Services\TransactionServices;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\Gallery\PictureStoreRequest;
 
 
@@ -21,9 +20,9 @@ class PictureServices
     /**
      * Get all pictures with vote counts, sorted by vote count in descending order.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
-    public function getAll()
+    public function getAll(): Collection
     {
         return Picture::withCount('votes')->orderByDesc('votes_count')->get();
     }
@@ -47,6 +46,7 @@ class PictureServices
             // If the transaction fails, delete the uploaded file
             Storage::disk('public')->delete($path);
         }
+
         return $result;
     }
 
@@ -56,7 +56,7 @@ class PictureServices
      * @param Picture $picture
      * @return void
      */
-    public function destroyPicture(Picture $picture)
+    public function destroyPicture(Picture $picture): void
     {
         Storage::disk('public')->delete($picture->url);
         $picture->delete();

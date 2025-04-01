@@ -45,26 +45,29 @@ class NewsServices
                 Storage::disk('public')->delete($imagePath);
             }
         }
+
         return $result;
     }
 
     /**
      * Handle image upload
-     * @return void
+     * @return string
      */
-    private function handleImageUpload($request)
+    private function handleImageUpload( NewsStoreRequest $request): ?string
     {
         if ($request->hasFile('image')) {
             return $request->file('image')->store('images', 'public');
         }
+
         return null;
     }
 
     /**
      * delete news
+     * @param News $news
      * @return void
      */
-    public function destroyNews($news)
+    public function destroyNews( News $news) : void
     {
         if ($news->image_url) {
             Storage::disk('public')->delete($news->image_url);
