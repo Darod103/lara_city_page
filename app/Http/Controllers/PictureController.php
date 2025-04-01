@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Gallery\PictureStoreRequest;
+use Illuminate\View\View;
 use App\Models\Picture;
 use App\Services\PictureServices;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Gallery\PictureStoreRequest;
 
 
 class PictureController extends Controller
@@ -19,11 +21,12 @@ class PictureController extends Controller
     /**
      * Show all pictures.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $pictures = $this->pictureServices->getAll();
+
         return view('gallery.index', compact('pictures'));
     }
 
@@ -31,11 +34,15 @@ class PictureController extends Controller
      * Save a new picture.
      *
      * @param PictureStoreRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function store(PictureStoreRequest $request)
+    public function store(PictureStoreRequest $request): RedirectResponse
     {
-        $this->pictureServices->storePicture($request);
+        $result = $this->pictureServices->storePicture($request);
+        if (is_string($result)) {
+            return redirect()->route('gallery.index')->with('error', $result);
+        }
+
         return redirect()->route('gallery.index')->with('success', 'Картинка успешно добавлена !');
     }
 
@@ -43,11 +50,12 @@ class PictureController extends Controller
      * Delete a picture.
      *
      * @param Picture $picture
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function destroy(Picture $picture)
+    public function destroy(Picture $picture): RedirectResponse
     {
         $this->pictureServices->destroyPicture($picture);
+
         return redirect()->route('gallery.index')->with('success', 'Картинка успешно удалена !');
     }
 }

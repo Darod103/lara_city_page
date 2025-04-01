@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\News\NewsStoreRequest;
+
 use App\Models\News;
-use App\Services\NewsServices;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Services\NewsServices;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\News\NewsStoreRequest;
 
 
 class NewsController extends Controller
@@ -23,6 +26,7 @@ class NewsController extends Controller
     public function index()
     {
         $allNews = $this->newsServices->getAllNews();
+
         return view('news.index', compact('allNews'));
     }
 
@@ -36,17 +40,24 @@ class NewsController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * return RedirectResponse
      */
-    public function store(NewsStoreRequest $request)
+    public function store(NewsStoreRequest $request): RedirectResponse
     {
-        $this->newsServices->storeNews($request);
+        $result = $this->newsServices->storeNews($request);
+        if (is_string($result)) {
+            return redirect()->route('news.index')->with('error', $result);
+        }
+
         return redirect()->route('news.index')->with('success', 'Новость успешно добавлена');
     }
 
     /**
      * Display the specified resource.
+     * @param News $news
+     * @return View
      */
-    public function show(News $news)
+    public function show(News $news): View
     {
         return (view('news.show', compact('news')));
     }
@@ -69,10 +80,13 @@ class NewsController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @param News $news
+     * @return RedirectResponse
      */
-    public function destroy(News $news)
+    public function destroy(News $news): RedirectResponse
     {
         $this->newsServices->destroyNews($news);
+
         return redirect()->route('news.index')->with('success', 'Новость успешно удаленна');
     }
 }

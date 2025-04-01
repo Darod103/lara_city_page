@@ -2,12 +2,19 @@
 
 namespace App\Services;
 
-use App\Http\Requests\News\NewsStoreRequest;
 use App\Models\News;
+use App\Services\TransactionServices;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\News\NewsStoreRequest;
 
 class NewsServices
 {
+    protected TransactionServices $transactionServices;
+
+    public function __construct(TransactionServices $transactionServices)
+    {
+        $this->transactionServices = $transactionServices;
+    }
 
     /**
      * Get all news
@@ -19,40 +26,50 @@ class NewsServices
 
     /**
      * Save news
-     * @return void
+     * @param NewsStoreRequest $request
+     * @return News|string
      */
-    public function storeNews(NewsStoreRequest $request)
+    public function storeNews(NewsStoreRequest $request): News|string
     {
         $validatedData = $request->validated();
-
         $imagePath = $this->handleImageUpload($request);
+        $news = $this->transactionServices->run(function () use ($validatedData, $imagePath) {
+            News::create([
+                'user_id' => auth()->id(),
+                'title' => $validatedData['title'],
+                'text' => $validatedData['text'],
+                'image_url' => $imagePath,
+            ]);
+        });
+        {
+            if (!$news) {
+                Storage::disk('public')->delete($imagePath);
+                return 'Ошибка при загрузке новости';
+            }
+        }
 
-        News::create([
-            'user_id' => auth()->id(),
-            'title' => $validatedData['title'],
-            'text' => $validatedData['text'],
-            'image_url' => $imagePath,
-        ]);
-
+        return $news;
     }
 
     /**
      * Handle image upload
-     * @return void
+     * @return string
      */
-    private function handleImageUpload($request)
+    private function handleImageUpload(NewsStoreRequest $request): ?string
     {
         if ($request->hasFile('image')) {
             return $request->file('image')->store('images', 'public');
         }
+
         return null;
     }
 
     /**
      * delete news
+     * @param News $news
      * @return void
      */
-    public function destroyNews($news)
+    public function destroyNews(News $news): void
     {
         if ($news->image_url) {
             Storage::disk('public')->delete($news->image_url);
