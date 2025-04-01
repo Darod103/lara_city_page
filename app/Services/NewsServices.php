@@ -26,13 +26,14 @@ class NewsServices
 
     /**
      * Save news
-     * @return bool
+     * @param NewsStoreRequest $request
+     * @return News|string
      */
-    public function storeNews(NewsStoreRequest $request): bool
+    public function storeNews(NewsStoreRequest $request): News|string
     {
         $validatedData = $request->validated();
         $imagePath = $this->handleImageUpload($request);
-        $result = $this->transactionServices->run(function () use ($validatedData, $imagePath) {
+        $news = $this->transactionServices->run(function () use ($validatedData, $imagePath) {
             News::create([
                 'user_id' => auth()->id(),
                 'title' => $validatedData['title'],
@@ -41,19 +42,20 @@ class NewsServices
             ]);
         });
         {
-            if (!$result && $imagePath) {
+            if (!$news) {
                 Storage::disk('public')->delete($imagePath);
+                return 'Ошибка при загрузке новости';
             }
         }
 
-        return $result;
+        return $news;
     }
 
     /**
      * Handle image upload
      * @return string
      */
-    private function handleImageUpload( NewsStoreRequest $request): ?string
+    private function handleImageUpload(NewsStoreRequest $request): ?string
     {
         if ($request->hasFile('image')) {
             return $request->file('image')->store('images', 'public');
@@ -67,7 +69,7 @@ class NewsServices
      * @param News $news
      * @return void
      */
-    public function destroyNews( News $news) : void
+    public function destroyNews(News $news): void
     {
         if ($news->image_url) {
             Storage::disk('public')->delete($news->image_url);

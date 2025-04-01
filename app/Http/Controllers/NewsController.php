@@ -44,8 +44,9 @@ class NewsController extends Controller
      */
     public function store(NewsStoreRequest $request): RedirectResponse
     {
-        if (!$this->newsServices->storeNews($request)) {
-            return redirect()->route('news.index')->with('error', 'Ой что-то пошло не так новость не загрузилась');
+        $result = $this->newsServices->storeNews($request);
+        if (is_string($result)) {
+            return redirect()->route('news.index')->with('error', $result);
         }
 
         return redirect()->route('news.index')->with('success', 'Новость успешно добавлена');

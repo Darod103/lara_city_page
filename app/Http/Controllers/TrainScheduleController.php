@@ -62,8 +62,9 @@ class TrainScheduleController extends Controller
      */
     public function store(ScheduleStoreRequest $request): RedirectResponse
     {
-        if (!$this->trainScheduleServices->storeSchedules($request)) {
-            return redirect()->back()->with('error', 'Ошибка при добавлении расписания');
+        $result = $this->trainScheduleServices->storeSchedules($request);
+        if (is_string($result)) {
+            return redirect()->back()->with('error', $result);
         }
 
         return redirect()->back()->with('success', 'Успешно добавлено расписание');

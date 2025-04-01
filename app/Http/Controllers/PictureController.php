@@ -38,8 +38,9 @@ class PictureController extends Controller
      */
     public function store(PictureStoreRequest $request): RedirectResponse
     {
-        if (!$this->pictureServices->storePicture($request)) {
-            return redirect()->route('gallery.index')->with('error', 'Картинка не загрузилась');
+        $result = $this->pictureServices->storePicture($request);
+        if (is_string($result)) {
+            return redirect()->route('gallery.index')->with('error', $result);
         }
 
         return redirect()->route('gallery.index')->with('success', 'Картинка успешно добавлена !');

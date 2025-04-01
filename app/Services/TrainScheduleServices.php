@@ -22,7 +22,6 @@ class TrainScheduleServices
     public function __construct(TrainSchedule $trainSchedule, TransactionServices $transactionServices)
     {
         $this->transactionServices = $transactionServices;
-
     }
 
     /**
@@ -41,13 +40,18 @@ class TrainScheduleServices
      * Сохранить новое расписание
      *
      * @param ScheduleStoreRequest $request
-     * @return bool
+     * @return TrainSchedule|string
      */
-    public function storeSchedules(ScheduleStoreRequest $request): bool
+    public function storeSchedules(ScheduleStoreRequest $request): TrainSchedule|string
     {
-        return $this->transactionServices->run(function () use ($request) {
+        $trainSchedule = $this->transactionServices->run(function () use ($request) {
             TrainSchedule::create($request->validated());
         });
+        if (!$trainSchedule) {
+            return 'Ошибка при загрузке расписания';
+        }
+
+        return $trainSchedule;
     }
 
     /**

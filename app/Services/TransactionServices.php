@@ -11,17 +11,17 @@ use Illuminate\Support\Facades\DB;
  * If the transaction fails, it catches the exception and returns false.
  * If the transaction is successful, it returns true.
  */
+
 class TransactionServices
 {
-    public function run(callable $callback): bool
+    public function run(callable $callback): mixed
     {
         try {
-            DB::transaction(function () use ($callback) {
-                $callback();
+            return DB::transaction(function () use ($callback) {
+                return $callback();
             });
-            return true;
         } catch (\Throwable $e) {
-            return false;
+            return null;
         }
     }
 }

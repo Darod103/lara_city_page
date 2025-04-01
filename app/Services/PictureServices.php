@@ -31,23 +31,24 @@ class PictureServices
      * Save a picture.
      *
      * @param PictureStoreRequest $request
-     * @return bool
+     * @return Picture|string
      */
-    public function storePicture(PictureStoreRequest $request): bool
+    public function storePicture(PictureStoreRequest $request): Picture|string
     {
         $path = $request->file('picture')->store('pictures', 'public');
-        $result = $this->transactionServices->run(function () use ($path) {
+        $picture = $this->transactionServices->run(function () use ($path) {
             Picture::create([
                 'user_id' => auth()->id(),
                 'url' => $path
             ]);
         });
-        if (!$result) {
+        if (!$picture) {
             // If the transaction fails, delete the uploaded file
             Storage::disk('public')->delete($path);
+            return 'Ошибка при загрузке изображения';
         }
 
-        return $result;
+        return $picture;
     }
 
     /**
